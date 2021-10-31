@@ -1,34 +1,30 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# A repo to reproduce gRPC bug in serverless Nextjs
 
-## Getting Started
+`yarn install`
+`yarn run build`
+`yarn run start`
 
-First, run the development server:
+`GET http://127.0.0.1:3000/api/hello`
 
-```bash
-npm run dev
-# or
-yarn dev
+Will trigger a 500 error, with this error in the console:
+
+```
+Error: ENOENT: no such file or directory, open '/Users/richard/Projects/test-grpc/.next/serverless/grpc/protos/autopilot.proto'
+    at Object.openSync (node:fs:585:3)
+    at Object.readFileSync (node:fs:453:35)
+    at fetch (/Users/richard/Projects/test-grpc/.next/serverless/chunks/674.js:106984:34)
+    at Root.load (/Users/richard/Projects/test-grpc/.next/serverless/chunks/674.js:107018:13)
+    at Root.loadSync (/Users/richard/Projects/test-grpc/.next/serverless/chunks/674.js:107059:17)
+    at Object.loadProtosWithOptionsSync (/Users/richard/Projects/test-grpc/.next/serverless/chunks/674.js:9922:29)
+    at loadSync (/Users/richard/Projects/test-grpc/.next/serverless/chunks/674.js:9827:31)
+    at module.exports (/Users/richard/Projects/test-grpc/.next/serverless/chunks/674.js:63352:42)
+    at /Users/richard/Projects/test-grpc/.next/serverless/chunks/674.js:63429:24
+    at Array.reduce (<anonymous>) {
+  errno: -2,
+  syscall: 'open',
+  code: 'ENOENT',
+  path: '/Users/richard/Projects/test-grpc/.next/serverless/grpc/protos/autopilot.proto'
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Running `yarn run dev` "works", but triggers a different error (can't connect the the server), but gRPC client can load the required \*.proto files.
